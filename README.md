@@ -1,4 +1,4 @@
-ee357labs
+EE-357 Lab repository
 =========
 
-EE 357 labs--Eric Gauderman and Angelica Tran
+Eric Gauderman and Angelica Tran
