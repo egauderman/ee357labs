@@ -60,7 +60,7 @@ LOOP1:
 		swap	d1
 		move.l	d2,d3			//put temp into pred
 		move.b	d1,0x4010000F	// Light up the LED's as the DIP.
-		bra.s	LOOP1				//restart loop
+		bra.s	LOOP1			//restart loop
 
 /* bcc.l and bra.l are not supported (supported only ISA_B);
  * use only bcc.s, bcc.w, bra.s or bra.w.
