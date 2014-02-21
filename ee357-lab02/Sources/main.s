@@ -54,12 +54,14 @@ SEQUENCELOOP:
 	//check condition with switches
 	move.l	#$0, d2				//clear d2 (because we can only compare with size long)
 	move.b	$40100044, d2		//get input from switches
+	move.l	d2, d6				//(for debugging)
+	lsr.l	#4, d6				//(for debugging)
+	move.b	d6, $4010000F		//set the value of the switches to the LEDs (for debugging)
 	cmpi.l	#$F, d2				//compare against value of switch
 	blt.s	FIB					//branch to fib if any of the four switches is on (if 0xF is less than d2)
 	
 	EVEN:
-		// Note: keeping the previous two values of the sequence so that we can easily switch to fibbonacci sequence.
-		move.l	d1, d3			//put current val into predecessor
+		move.l	d1, d3			//put current val into predecessor so that we have it if we switch to fib
 		addq.l	#2, d1			//add two
 		bra.s	AFTER			//skip the fib section to update the LEDs and loop
 	FIB:
