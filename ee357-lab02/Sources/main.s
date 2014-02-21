@@ -20,47 +20,58 @@ prmpt2: .asciz "Enter an integer:\n"
 
 _main:
 main:
-		//
-		/* Initialize the LED's. */
-		move.l #0x0,d0
-		move.b d0,0x4010006F // Set pins to be used GPIO.
-		move.l #0xFFFFFFFF,d0
-		move.b d0,0x40100027 // Set LED's as output.
+		// IO settings for LEDs and switches:
+		// Port Assignment (GPIO mode, whatever that means):
+		move.l #$0, d0
+		move.b d0, $4010006F	// Set pins for LEDs port to GPIO mode.
+		move.b d0, $40100074	// Set pins for switches port to GPIO mode.
+		// Data Direction:
+		// move.b #$0, d0		//already done above
+		move.b d0, $4010002C	// Set switches as input.
+		move.b #$FF, d0
+		move.b d0, $40100027	// Set LEDs as output.
 
-		// Initial value 0000 for the LED's:
-		move.l #0x0,d1
-		move.l d1,0x4010000F
-		//initialize previous value of LEDs as 0:
-		move.l	#0x0,d3
+		// Initialize the value of the LEDs (the current value of our sequence):
+		move.b #$0, d1
+		move.b d1, $4010000F
+		
+		move.l	#$0, d3 // initialize previous value of the sequence as 0
+		
+		// note: move values into $4010000F to set LEDs,
+		//       and move values from $40100044 to get input from switches.
+		
+		
 
 // Outer infinite loop:
 // Display even numbers on the LED's.
-LOOP1:
+SEQUENCELOOP:
 	// Inner loop to delay the processor.
-	move.l	#0xffffff,d2
-	LOOP2:
-		subq.l	#0x1,d2
-		bne.s	LOOP2
-		
+	move.l	#$7FFFFF, d2
+	DELAYLOOP:
+		subq.l	#$1, d2			// note: keep this #0x1 so that d2 will definitely get to zero no matter what the initial value of d2 is set to
+		bne.s	DELAYLOOP
+	
 	//check condition with switches
-	move.l	#0x40100044, d2		//get input from switches
-	cmp.l	#0x1FFFF,d2					//compare against value of switch
-	beq.s	FIB					//branch to fib if on	
+	move.l	#$0, d2				//clear d2 (because we can only compare with size long)
+	move.b	$40100044, d2		//get input from switches
+	cmpi.l	#$F, d2				//compare against value of switch
+	blt.s	FIB					//branch to fib if any of the four switches is on (if 0xF is less than d2)
 	
 	EVEN:
-		move.l	d1,d3			//put current val into predecessor
-		addq.l	#0x2,d1			//add two
-		move.b	d1,0x4010000F	// Light up the LED's as the DIP.
-		bra.s	LOOP1			//restart loop
+		// Note: keeping the previous two values of the sequence so that we can easily switch to fibbonacci sequence.
+		move.l	d1, d3			//put current val into predecessor
+		addq.l	#2, d1			//add two
+		bra.s	AFTER			//skip the fib section to update the LEDs and loop
 	FIB:
-		move.l	d1,d2			//put current value in temp
-		add.l	d3,d1			//add pred and curr
+		move.l	d1, d2			//put current value in temp
+		add.l	d3, d1			//add pred and curr
 		swap	d1				//mod by 16
-		move.b	#0x0,d1
+		move.b	#$0, d1
 		swap	d1
-		move.l	d2,d3			//put temp into pred
-		move.b	d1,0x4010000F	// Light up the LED's as the DIP.
-		bra.s	LOOP1			//restart loop
+		move.l	d2, d3			//put temp into pred
+	AFTER:
+		move.b	d1, $4010000F	// Light up the LED's as the DIP.
+		bra.s	SEQUENCELOOP	//restart loop
 
 /* bcc.l and bra.l are not supported (supported only ISA_B);
  * use only bcc.s, bcc.w, bra.s or bra.w.
