@@ -1,8 +1,8 @@
-Sources/uart_support.obj: C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Sources\uart_support.c \
+Sources/uart_support.obj: C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Sources\uart_support.c \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\lib_ewl.prefix \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\common.prefix \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\ewl_c_version.h \
-	C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\support_common.h \
+	C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\support_common.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_SCM.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_FBCS.h \
@@ -31,5 +31,5 @@ Sources/uart_support.obj: C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_USB_OTG.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_CFM.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_RNGA.h \
-	C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\MCF52259_sysinit.h \
-	C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\uart_support.h 
+	C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\MCF52259_sysinit.h \
+	C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\uart_support.h 

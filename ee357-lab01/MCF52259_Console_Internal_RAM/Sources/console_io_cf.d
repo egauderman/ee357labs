@@ -1,4 +1,4 @@
-Sources/console_io_cf.obj: C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Sources\console_io_cf.c \
+Sources/console_io_cf.obj: C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Sources\console_io_cf.c \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\lib_ewl.prefix \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\common.prefix \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\ewl_c_version.h \

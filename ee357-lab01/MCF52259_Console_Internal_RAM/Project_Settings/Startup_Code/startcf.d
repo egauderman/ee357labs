@@ -1,9 +1,9 @@
-Project_Settings/Startup_Code/startcf.obj: C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Project_Settings\Startup_Code\startcf.c \
+Project_Settings/Startup_Code/startcf.obj: C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Project_Settings\Startup_Code\startcf.c \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\lib_ewl.prefix \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\common.prefix \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_C\include\ewl_c_version.h \
-	C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Project_Settings\Startup_Code\startcf.h \
-	C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\support_common.h \
+	C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Project_Settings\Startup_Code\startcf.h \
+	C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\support_common.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_SCM.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_FBCS.h \
@@ -32,5 +32,5 @@ Project_Settings/Startup_Code/startcf.obj: C:\Users\Angelica\Documents\GitHub\ee
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_USB_OTG.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_CFM.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\(headers)\MCF52259\MCF52259_RNGA.h \
-	C:\Users\Angelica\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\MCF52259_sysinit.h \
+	C:\Users\Eric\Documents\GitHub\ee357labs\ee357-lab01\Project_Headers\MCF52259_sysinit.h \
 	C:\Program\ Files\ (x86)\Freescale\CW\ MCU\ v10.0\MCU\ColdFire_Support\ewl\EWL_Runtime\Runtime_ColdFire\Source\RuntimeConfig.h 
