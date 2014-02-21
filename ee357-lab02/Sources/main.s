@@ -68,8 +68,8 @@ SEQUENCELOOP:
 		move.l	d1, d2			//put current value in temp
 		add.l	d3, d1			//add pred and curr
 		swap	d1				//mod by 16
-		move.b	#$0, d1
-		swap	d1
+		move.b	#$0, d1			//part of mod by 16
+		swap	d1				//part of mod by 16 (I think this doesn't work correctly)
 		move.l	d2, d3			//put temp into pred
 	AFTER:
 		move.b	d1, $4010000F	// Light up the LED's as the DIP.
