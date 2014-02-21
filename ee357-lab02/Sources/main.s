@@ -31,11 +31,11 @@ main:
 		move.b #$FF, d0
 		move.b d0, $40100027	// Set LEDs as output.
 
-		// Initialize the value of the LEDs (the current value of our sequence):
+		// Initialize the value of current value of the sequence (and the LEDs):
 		move.b #$0, d1
 		move.b d1, $4010000F
 		
-		move.l	#$0, d3 // initialize previous value of the sequence as 0
+		move.l	#$1, d3 // initialize previous value of the sequence as 1
 		
 		// note: move values into $4010000F to set LEDs,
 		//       and move values from $40100044 to get input from switches.
@@ -54,25 +54,23 @@ SEQUENCELOOP:
 	//check condition with switches
 	move.l	#$0, d2				//clear d2 (because we can only compare with size long)
 	move.b	$40100044, d2		//get input from switches
-	move.l	d2, d6				//(for debugging)
-	lsr.l	#4, d6				//(for debugging)
-	move.b	d6, $4010000F		//set the value of the switches to the LEDs (for debugging)
-	cmpi.l	#$F, d2				//compare against value of switch
-	blt.s	FIB					//branch to fib if any of the four switches is on (if 0xF is less than d2)
+	lsr.l	#4, d2				//shift d2 right 4 bits so that the switches represent a number
+	cmpi.l	#$0, d2				//check if any of the switches are on
+	bne.s	FIB					//branch to fib if any of the four switches is on (if 0xF is less than d2)
 	
 	EVEN:
+		//TODO: make sure this is finished
 		move.l	d1, d3			//put current val into predecessor so that we have it if we switch to fib
 		addq.l	#2, d1			//add two
 		bra.s	AFTER			//skip the fib section to update the LEDs and loop
 	FIB:
+		// note: d1 is current, d3 is previous, d2 is temp
+		//TODO: should be done, make sure it works
 		move.l	d1, d2			//put current value in temp
-		add.l	d3, d1			//add pred and curr
-		swap	d1				//mod by 16
-		move.b	#$0, d1			//part of mod by 16
-		swap	d1				//part of mod by 16 (I think this doesn't work correctly)
-		move.l	d2, d3			//put temp into pred
+		add.l	d3, d1			//add predecessor into current
+		move.l	d2, d3			//put temp into predecessor
 	AFTER:
-		move.b	d1, $4010000F	// Light up the LED's as the DIP.
+		move.b	d1, $4010000F	// light up the LED's as the DIP.
 		bra.s	SEQUENCELOOP	//restart loop
 
 /* bcc.l and bra.l are not supported (supported only ISA_B);
