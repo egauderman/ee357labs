@@ -59,18 +59,17 @@ SEQUENCELOOP:
 	bne.s	FIB					//branch to fib if any of the four switches is on (if 0xF is less than d2)
 	
 	EVEN:
-		//TODO: make sure this is finished
 		move.l	d1, d3			//put current val into predecessor so that we have it if we switch to fib
 		addq.l	#2, d1			//add two
 		bra.s	AFTER			//skip the fib section to update the LEDs and loop
 	FIB:
 		// note: d1 is current, d3 is previous, d2 is temp
-		//TODO: should be done, make sure it works
 		move.l	d1, d2			//put current value in temp
 		add.l	d3, d1			//add predecessor into current
 		move.l	d2, d3			//put temp into predecessor
 	AFTER:
 		move.b	d1, $4010000F	// light up the LED's as the DIP.
+		jsr		ee357_put_int	//print current value of sequence
 		bra.s	SEQUENCELOOP	//restart loop
 
 /* bcc.l and bra.l are not supported (supported only ISA_B);
