@@ -3,7 +3,7 @@
   		.data
 // Replace declaration below.
 mybuf:	.space 80
-mymsg:  .asciz "ASM template for EE 357\n"  // Remember to put and get
+mymsg:  .asciz "ASM template for EE 357; testing for lab03\n"  // Remember to put and get
 prmpt0: .asciz "Here is an integer:\n"		// strings terminated with
 prmpt1: .asciz "Enter a string:\n"          // newline characters 
 prmpt2: .asciz "Enter an integer:\n"
