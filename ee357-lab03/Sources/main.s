@@ -28,25 +28,65 @@ main:
 	// note: move values into $4010000F to set LEDs,
 	//       and move values from $40100044 to get input from switches.
 	
+	
+	
+	// Initialize N
+	
 	// note: d0 is counter, d3 saves n
 	clr.l	d0				// clear upper bits of N
 	move.b	$40100044, d0	// get current value of switches
 	clr.l	d3				// clear upper bits of N
 	move.b	d0, d3			// save N into d3
 	
+	
+	
+	// Get numbers:
+	
 	INPUTLOOP:
 		subi.b	#1, d0			// decrement counter
 		
 		jsr		getinput		// put the next value into d1
-		mov.b	d1, $4010000F	// light up the LEDs with the current value
-		mov.b	d1, -(a7)		// put it on the stack
+		move.b	d1, $4010000F	// light up the LEDs with the current value
+		move.b	d1, -(a7)		// put it on the stack
 		
 		cmpi.b	#0, d0			// if we haven't finished all the values,
 		bne.s	INPUTLOOP		// repeat.
 	
-	// note: now, the numbers are from a7 to a7 + d3
+	// note: now, the numbers are in [a7, a7 + d3)
 	
 	
+	
+	// Bubble Sort:
+	// note: d0 is i, a1 is j, d3 is N, d1 & d2 are temp (?)
+	move.b	d3, d0			// start i as N
+	clr.l	a1				// clear j
+	
+	LOOPI:
+		subi.b	#1, d0			// decrement i
+		
+		clr.l	#0, a1			// set j to 0
+		LOOPJ:
+			
+			// compare value at j with value at j+1
+			// if [j] > [j+1] swap [j] and [j+1]
+			cmp.l	(a7,a1), #1(a7,a1)	// compare j with j+1
+			bgt		AFTER
+				// Swap j and j+1
+				move.b	(a7,a1), d1			// put [j] into d1
+				move.b	#1(a7,a1), d2		// put [j+1] into d2
+				move.b	d1, #1(a7,a1)		// put d1 into [j+1]
+				move.b	d2, (a7,a1)			// put d2 into [j]
+			AFTER:
+			addi.b	#1, a1			// increment j
+			cmp.l	d0, a1			// compare i and j, and
+			bne.s	LOOPJ			// loop back to inner loop
+		
+		cmpi.l	#0, d0			// compare i to 0
+		bne.s	LOOPI			// go back to outer loop if i isn't 0
+	
+	
+	
+	// Display ascending then descending:
 
 /*
 	// Initialize the value of current value of the sequence (and the LEDs):
