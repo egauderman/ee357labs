@@ -56,11 +56,6 @@ main:
 		cmpi.l	#0, d0			// if we haven't finished all the values,
 		bne.s	INPUTLOOP		// repeat.
 	// note: now, the numbers are in the range: [a7, a7+d3)
-	jsr		printdes		// print inputted sequence
-	
-	move.l	#$D,d1
-	jsr		ee357_put_int
-	
 	
 	// Bubble Sort:
 	// note: i starts at N-1 and goes down to 1, j starts at 0 and goes to N-2.
@@ -69,33 +64,35 @@ main:
 	// note: d0 is i, d4 is j, d3 is N, d1 & d2 are temp (?)
 	move.b	d3, d0			// start i as N
 	move.l	#0, d4			// clear j
+	lsl.l	#2, d0			// mult i by 4
 	
 	LOOPI:
-		subi.l	#1, d0			// decrement i; now i is pointing to the last element that will be compared. (on first iteration, i=N-1)
+		subi.l	#4, d0			// decrement i; now i is pointing to the last element that will be compared. (on first iteration, i=N-1)
+		
+		
 		
 		clr.l	d4				// set j to 0
 		LOOPJ:
 			// Compare [j] with [j+1].  If [j] > [j+1], swap [j] and [j+1].
 			move.l	0(a7,d4), d1		// put [j] into d1
-			move.l	1(a7,d4), d2		// put [j+1] into d2
+			move.l	4(a7,d4), d2		// put [j+1] into d2
 			cmp.l	d1, d2				// compare [j] with [j+1]
-			bgt		NOSWAP				// if d2 ([j+1]) > d1 ([j]), don't swap.
+			bge		NOSWAP				// if d2 ([j+1]) >= d1 ([j]), don't swap.
 				// Swap [j] and [j+1].
-				move.b	d1, 1(d4,a7) 		// put d1 ([j]) into [j+1]
-				move.b	d2, (d4,a7)			// put d2 ([j+1]) into [j]
+				move.l	d1, 4(d4,a7) 		// put d1 ([j]) into [j+1]
+				move.l	d2, (d4,a7)			// put d2 ([j+1]) into [j]
 			NOSWAP:
 			
-			addi.l	#1, d4			// increment j
+			addi.l	#4, d4			// increment j
 			cmp.l	d0, d4			// compare i and j, and
 			bne.s	LOOPJ			// loop back to inner loop if j hasn't reached i
 		
-		cmpi.l	#1, d0			// compare i to 1
+		cmpi.l	#4, d0			// compare i to 1
 		bne.s	LOOPI			// go back to outer loop if i hasn't gotten down to 1
-	
-	
-	
-	// Display ascending then descending.
 
+	// Display ascending then descending.
+	jsr		printasc
+	jsr		printdes
 
 /* //OLD: LAB02.
 	// Initialize the value of current value of the sequence (and the LEDs):
@@ -143,6 +140,7 @@ SEQUENCELOOP:
 	//======= Let the following few lines always end your main routing ===//
 	//------- No OS to return to so loop infinitely...Never hits rts --- //
 	endloop:
+
 		bra.s	endloop
 		rts
 
@@ -215,6 +213,7 @@ printasc:
 		cmp.l	d0, d4			// compare d0 and N
 		bgt.s	PRINTLOOPASC
 
+	move.l	(a7)+, d2
 	move.l	(a7)+, d4
 	move.l	(a7)+, d1		// put back the value of d1
 	move.l	(a7)+, d0		// put back the value of d0
@@ -239,12 +238,14 @@ printdes:
 		
 		move.l	12(a7,d0), d1	// put the current value into d1... note: the 8 is because a7 is pointing to the old values of d0 and d1
 		jsr		ee357_put_int
-		move.l	d0,d1
 		move.b	d1, $4010000F	// light up the LEDs with the current value	
 		subi.l	#4, d0			// increment d0
 		cmpi.l	#0, d0			// compare d0 and N
 		bgt.s	PRINTLOOPDES
 
+	move.l	(a7)+, d2
 	move.l	(a7)+, d1		// put back the value of d1
 	move.l	(a7)+, d0		// put back the value of d0
+	
+	
 	rts
