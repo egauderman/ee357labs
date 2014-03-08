@@ -182,13 +182,18 @@ getinput:
 
 // Print the memory's contents, from 0 to d3 (N)
 printasc:
-	move.l	#350, d0
-	move.l	#351, d1
 	move.l	d0, -(a7)		// store d0 onto stack so we don't overwrite
 	move.l	d1, -(a7)		// store d1 onto stack so we don't overwrite
 	
-	move.l	(a7), d1		// DEBUG to print the current stack value, which is the old value of d1
-	jsr		ee357_put_int	// DEBUG print
+	// note: now the stack is like this:
+	// a7 -> d1
+	//       d0
+	//       (return address)
+	//       (first element of array)
+	//       (second element of array)
+	//       ...
+	//       (d3-1'th element of array)
+	//       (other memory)
 	
 	clr.l	d0				// initialize d0 to 0
 	PRINTLOOPASC:
