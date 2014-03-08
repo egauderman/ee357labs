@@ -50,14 +50,16 @@ main:
 		jsr		ee357_put_int	// print the last entered value
 		move.b	d1, $4010000F	// light up the LEDs with the current value
 		move.l	d1, -(a7)		// put it on the stack
-		move.l	(a7), d1		// move the value into d1 so we can print
-		jsr		ee357_put_int	// print it
+//		move.l	(a7), d1		// move the value into d1 so we can print
+//		jsr		ee357_put_int	// print it
 		
 		cmpi.l	#0, d0			// if we haven't finished all the values,
 		bne.s	INPUTLOOP		// repeat.
 	// note: now, the numbers are in the range: [a7, a7+d3)
-	jsr		printasc		// print inputted sequence
+	jsr		printdes		// print inputted sequence
 	
+	move.l	#$D,d1
+	jsr		ee357_put_int
 	
 	
 	// Bubble Sort:
@@ -179,11 +181,12 @@ getinput:
 	rts
 
 
-
-// Print the memory's contents, from 0 to d3 (N)
+// Print the memory's contents, from 0 to d4 (N)
 printasc:
 	move.l	d0, -(a7)		// store d0 onto stack so we don't overwrite
 	move.l	d1, -(a7)		// store d1 onto stack so we don't overwrite
+	move.l	d4,	-(a7)
+	move.l	d2, -(a7)
 	
 	// note: now the stack is like this:
 	// a7 -> d1
@@ -196,16 +199,52 @@ printasc:
 	//       (other memory)
 	
 	clr.l	d0				// initialize d0 to 0
+	clr.l	d4
+	move.l	d3,d4
+	lsl.l	#2, d4
 	PRINTLOOPASC:
-		move.l	(a7,d0), d1	// put the current value into d1... note: the 8 is because a7 is pointing to the old values of d0 and d1
+		move.l	#$7FFFFF, d2
+		DELAYLOOPA:
+			subq.l	#$1, d2			// note: keep this #0x1 so that d2 will definitely get to zero no matter what the initial value of d2 is set to
+			bne.s	DELAYLOOPA
+		
+		move.l	20(a7,d0), d1	// put the current value into d1... note: the 8 is because a7 is pointing to the old values of d0 and d1
 		jsr		ee357_put_int	// print the current value
+		move.b	d1, $4010000F	// light up the LEDs with the current value	
 		addi.l	#4, d0			// increment d0
-		
-		lsl.l	#2, d3			// multiply d3 by 4
-		cmp.l	d0, d3			// compare d0 and N
-		lsr.l	#2, d3			// divide d3 by 4
-		
+		cmp.l	d0, d4			// compare d0 and N
 		bgt.s	PRINTLOOPASC
+
+	move.l	(a7)+, d4
+	move.l	(a7)+, d1		// put back the value of d1
+	move.l	(a7)+, d0		// put back the value of d0
+
+	rts
+
+
+// Print the memory's contents, from d4 (N), 0
+printdes:
+	move.l	d0, -(a7)		// store d0 onto stack so we don't overwrite
+	move.l	d1, -(a7)		// store d1 onto stack so we don't overwrite
+	move.l	d2, -(a7)
+	
+	clr.l	d0				// initialize d0 to N
+	move.l	d3,d0
+	lsl.l	#2, d0
+	PRINTLOOPDES:
+		move.l	#$7FFFFF, d2
+		DELAYLOOPD:
+			subq.l	#$1, d2			// note: keep this #0x1 so that d2 will definitely get to zero no matter what the initial value of d2 is set to
+			bne.s	DELAYLOOPD
+		
+		move.l	12(a7,d0), d1	// put the current value into d1... note: the 8 is because a7 is pointing to the old values of d0 and d1
+		jsr		ee357_put_int
+		move.l	d0,d1
+		move.b	d1, $4010000F	// light up the LEDs with the current value	
+		subi.l	#4, d0			// increment d0
+		cmpi.l	#0, d0			// compare d0 and N
+		bgt.s	PRINTLOOPDES
 
 	move.l	(a7)+, d1		// put back the value of d1
 	move.l	(a7)+, d0		// put back the value of d0
+	rts
