@@ -30,65 +30,72 @@ main:
 	
 	
 	
-	// Initialize N
+	// Initialize N.
+	// note: d0 is counter, d3 saves N
+	clr.l	d0				// clear upper bits of d0
+	move.b	$40100044, d0	// put current value of switches N into d0
+	lsr.l	#4, d0			// shift d0 4 bits to the right so that the switches' value goes directly to a number
+	move.l	d0, d1			// put N into d1 so we can print it
+	jsr		ee357_put_int	// print the last entered value
+	clr.l	d3				// clear upper bits of d3
+	move.b	d0, d3			// copy N into d3
 	
-	// note: d0 is counter, d3 saves n
-	clr.l	d0				// clear upper bits of N
-	move.b	$40100044, d0	// get current value of switches
-	clr.l	d3				// clear upper bits of N
-	move.b	d0, d3			// save N into d3
 	
 	
-	
-	// Get numbers:
-	
+	// Get list of numbers.
 	INPUTLOOP:
-		subi.b	#1, d0			// decrement counter
+		subi.l	#1, d0			// decrement counter
 		
 		jsr		getinput		// put the next value into d1
+		jsr		ee357_put_int	// print the last entered value
 		move.b	d1, $4010000F	// light up the LEDs with the current value
-		move.b	d1, -(a7)		// put it on the stack
+		move.l	d1, -(a7)		// put it on the stack
+		move.l	(a7), d1		// move the value into d1 so we can print
+		jsr		ee357_put_int	// print it
 		
-		cmpi.b	#0, d0			// if we haven't finished all the values,
+		cmpi.l	#0, d0			// if we haven't finished all the values,
 		bne.s	INPUTLOOP		// repeat.
-	
-	// note: now, the numbers are in [a7, a7 + d3)
+	// note: now, the numbers are in the range: [a7, a7+d3)
+	jsr		printasc		// print inputted sequence
 	
 	
 	
 	// Bubble Sort:
-	// note: d0 is i, a1 is j, d3 is N, d1 & d2 are temp (?)
+	// note: i starts at N-1 and goes down to 1, j starts at 0 and goes to N-2.
+	//       At each iteration, compare j and j+1 and swap if j>j+1.
+	//       On the last iteration of the outer loop, 
+	// note: d0 is i, d4 is j, d3 is N, d1 & d2 are temp (?)
 	move.b	d3, d0			// start i as N
-	clr.l	a1				// clear j
+	move.l	#0, d4			// clear j
 	
 	LOOPI:
-		subi.b	#1, d0			// decrement i
+		subi.l	#1, d0			// decrement i; now i is pointing to the last element that will be compared. (on first iteration, i=N-1)
 		
-		clr.l	#0, a1			// set j to 0
+		clr.l	d4				// set j to 0
 		LOOPJ:
+			// Compare [j] with [j+1].  If [j] > [j+1], swap [j] and [j+1].
+			move.l	0(a7,d4), d1		// put [j] into d1
+			move.l	1(a7,d4), d2		// put [j+1] into d2
+			cmp.l	d1, d2				// compare [j] with [j+1]
+			bgt		NOSWAP				// if d2 ([j+1]) > d1 ([j]), don't swap.
+				// Swap [j] and [j+1].
+				move.b	d1, 1(d4,a7) 		// put d1 ([j]) into [j+1]
+				move.b	d2, (d4,a7)			// put d2 ([j+1]) into [j]
+			NOSWAP:
 			
-			// compare value at j with value at j+1
-			// if [j] > [j+1] swap [j] and [j+1]
-			cmp.l	(a7,a1), #1(a7,a1)	// compare j with j+1
-			bgt		AFTER
-				// Swap j and j+1
-				move.b	(a7,a1), d1			// put [j] into d1
-				move.b	#1(a7,a1), d2		// put [j+1] into d2
-				move.b	d1, #1(a7,a1)		// put d1 into [j+1]
-				move.b	d2, (a7,a1)			// put d2 into [j]
-			AFTER:
-			addi.b	#1, a1			// increment j
-			cmp.l	d0, a1			// compare i and j, and
-			bne.s	LOOPJ			// loop back to inner loop
+			addi.l	#1, d4			// increment j
+			cmp.l	d0, d4			// compare i and j, and
+			bne.s	LOOPJ			// loop back to inner loop if j hasn't reached i
 		
-		cmpi.l	#0, d0			// compare i to 0
-		bne.s	LOOPI			// go back to outer loop if i isn't 0
+		cmpi.l	#1, d0			// compare i to 1
+		bne.s	LOOPI			// go back to outer loop if i hasn't gotten down to 1
 	
 	
 	
-	// Display ascending then descending:
+	// Display ascending then descending.
 
-/*
+
+/* //OLD: LAB02.
 	// Initialize the value of current value of the sequence (and the LEDs):
 	move.b #$0, d1
 	move.b d1, $4010000F
@@ -132,10 +139,10 @@ SEQUENCELOOP:
 
 
 	//======= Let the following few lines always end your main routing ===//
-	//------- No OS to return to so loop ---- //
-	//------- infinitely...Never hits rts --- //
-	inflp:	bra.s	inflp
-			rts
+	//------- No OS to return to so loop infinitely...Never hits rts --- //
+	endloop:
+		bra.s	endloop
+		rts
 
 //------ Defines subroutines here ------- //
 //------  Replace sub1 definition ------- //
@@ -166,5 +173,34 @@ getinput:
 		cmp.l	d1, d2			// compare new and old values of switches
 		beq.s	BUSYWAIT		// and loop if it hasn't changed
 	
-	move.l (a7)+, d2		// put back the value of d2
+	lsr.l	#4, d1			// shift d1 4 bits to the right so that the switches' value goes directly to a number
+	
+	move.l	(a7)+, d2		// put back the value of d2
 	rts
+
+
+
+// Print the memory's contents, from 0 to d3 (N)
+printasc:
+	move.l	#350, d0
+	move.l	#351, d1
+	move.l	d0, -(a7)		// store d0 onto stack so we don't overwrite
+	move.l	d1, -(a7)		// store d1 onto stack so we don't overwrite
+	
+	move.l	(a7), d1		// DEBUG to print the current stack value, which is the old value of d1
+	jsr		ee357_put_int	// DEBUG print
+	
+	clr.l	d0				// initialize d0 to 0
+	PRINTLOOPASC:
+		move.l	(a7,d0), d1	// put the current value into d1... note: the 8 is because a7 is pointing to the old values of d0 and d1
+		jsr		ee357_put_int	// print the current value
+		addi.l	#4, d0			// increment d0
+		
+		lsl.l	#2, d3			// multiply d3 by 4
+		cmp.l	d0, d3			// compare d0 and N
+		lsr.l	#2, d3			// divide d3 by 4
+		
+		bgt.s	PRINTLOOPASC
+
+	move.l	(a7)+, d1		// put back the value of d1
+	move.l	(a7)+, d0		// put back the value of d0
