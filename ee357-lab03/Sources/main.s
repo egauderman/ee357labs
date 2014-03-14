@@ -93,51 +93,9 @@ main:
 	
 	
 	// Display ascending then descending.
-
-
-/* //OLD: LAB02.
-	// Initialize the value of current value of the sequence (and the LEDs):
-	move.b #$0, d1
-	move.b d1, $4010000F
-	
-	move.l	#$1, d3 // initialize previous value of the sequence as 1
 	
 	
-		
-		
-
-// Outer infinite loop:
-// Display even numbers on the LED's.
-SEQUENCELOOP:
-	// Inner loop to delay the processor.
-	move.l	#$7FFFFF, d2
-	DELAYLOOP:
-		subq.l	#$1, d2			// note: keep this #0x1 so that d2 will definitely get to zero no matter what the initial value of d2 is set to
-		bne.s	DELAYLOOP
 	
-	//check condition with switches
-	move.l	#$0, d2				//clear d2 (because we can only compare with size long)
-	move.b	$40100044, d2		//get input from switches
-	lsr.l	#4, d2				//shift d2 right 4 bits so that the switches represent a number
-	cmpi.l	#$0, d2				//check if any of the switches are on
-	bne.s	FIB					//branch to fib if any of the four switches is on (if 0xF is less than d2)
-	
-	EVEN:
-		move.l	d1, d3			//put current val into predecessor so that we have it if we switch to fib
-		addq.l	#2, d1			//add two
-		bra.s	AFTER			//skip the fib section to update the LEDs and loop
-	FIB:
-		// note: d1 is current, d3 is previous, d2 is temp
-		move.l	d1, d2			//put current value in temp
-		add.l	d3, d1			//add predecessor into current
-		move.l	d2, d3			//put temp into predecessor
-	AFTER:
-		move.b	d1, $4010000F	// light up the LED's as the DIP.
-		jsr		ee357_put_int	//print current value of sequence
-		bra.s	SEQUENCELOOP	//restart loop
-	*/
-
-
 	//======= Let the following few lines always end your main routing ===//
 	//------- No OS to return to so loop infinitely...Never hits rts --- //
 	endloop:
@@ -184,9 +142,11 @@ getinput:
 printasc:
 	move.l	d0, -(a7)		// store d0 onto stack so we don't overwrite
 	move.l	d1, -(a7)		// store d1 onto stack so we don't overwrite
+	move.l	a0, -(a7)		// store a0 onto stack so we don't overwrite
 	
-	// note: now the stack is like this:
-	// a7 -> d1
+	// note: now the stack is like this (each line is 4 bytes):
+	// a7 -> a0
+	//       d1
 	//       d0
 	//       (return address)
 	//       (first element of array)
@@ -194,18 +154,22 @@ printasc:
 	//       ...
 	//       (d3-1'th element of array)
 	//       (other memory)
+	//       ...
+	
+	move.l	a7, a0			// copy a7 into a0
+	add.l	#16, a0			// increment a0 by 16 to make it go to the first element of the array
+	// note: now a0 points to the first element of the array
 	
 	clr.l	d0				// initialize d0 to 0
 	PRINTLOOPASC:
-		move.l	(a7,d0), d1	// put the current value into d1... note: the 8 is because a7 is pointing to the old values of d0 and d1
+		move.l	0(a0,d0), d1	// put the current value into d1
 		jsr		ee357_put_int	// print the current value
 		addi.l	#4, d0			// increment d0
-		
-		lsl.l	#2, d3			// multiply d3 by 4
-		cmp.l	d0, d3			// compare d0 and N
-		lsr.l	#2, d3			// divide d3 by 4
-		
-		bgt.s	PRINTLOOPASC
+		//TODO fix this
+		cmp.l	d0, d3			// compare d0 and N;
+		//TODO fix this too
+		bgt.s	PRINTLOOPASC	// 
 
+	move.l	(a7)+, a0		// put back the value of a0
 	move.l	(a7)+, d1		// put back the value of d1
 	move.l	(a7)+, d0		// put back the value of d0
