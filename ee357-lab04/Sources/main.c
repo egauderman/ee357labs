@@ -95,12 +95,15 @@ void leds_display(unsigned char cnt)
 }
 int main(void)
 {
-	int counter = 0;
-	unsigned char mycount = 0;
+	int n;
+	int i = 0;
+	//int counter = 0;
+	//unsigned char mycount = 0;
 
 	init_gpio();
 
-  	while (1){
+  	/*
+	while (1){
   		if(get_SW1_v1()){
 			mycount++;
   		}
@@ -109,6 +112,29 @@ int main(void)
   		}
 		leds_display(mycount);
   	}
+	*/
 	
+	
+	// Wait until sw1 is pressed
+	while(!get_SW1_v1()) {}
+	while(get_SW1_v1()) {}
+	// Get the value on the switches, store to N
+	
+	
+	asm(move.l d1, n);
+	//declare int a[N]
+	for(int i = 0; i < n; i++)
+	{
+		// Wait until sw1 is pressed
+		while(!get_SW1_v1()) {}
+		while(get_SW1_v1()) {}
 
+		// Get the value on the switches, store to a[i]
+	}
+	//  store to a[i]
+	//wait for either sw1 or sw3 to be pressed,
+	//  if sw1 sort ascending and display on LEDs
+	//  else if sw3 sort descending and display on LEDs
+	
+	//free the memory used for a?
 }
