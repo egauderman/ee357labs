@@ -122,16 +122,22 @@ int main(void)
 	
 	
 	asm(move.l d1, n);
+	
 	//declare int a[N]
-	for(int i = 0; i < n; i++)
+	
+	// Note: this is a for-loop, iterating through a
+	i = 0;
+	while(i < n)
 	{
 		// Wait until sw1 is pressed
 		while(!get_SW1_v1()) {}
 		while(get_SW1_v1()) {}
 
 		// Get the value on the switches, store to a[i]
+		
+		i++;
 	}
-	//  store to a[i]
+	
 	//wait for either sw1 or sw3 to be pressed,
 	//  if sw1 sort ascending and display on LEDs
 	//  else if sw3 sort descending and display on LEDs
