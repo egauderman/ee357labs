@@ -95,6 +95,53 @@ void leds_display(unsigned char cnt)
 
 }
 
+
+
+asm void sortAscending(int a, int n)
+{
+	move.l	d0, a0		// put a into register a0
+	move.l	d1, d3		// put n into register d0
+	
+	// note: now, the numbers are in the range: [a7, a7+d3)
+
+	// Bubble Sort:
+	// note: i starts at N-1 and goes down to 1, j starts at 0 and goes to N-2.
+	//       At each iteration, compare j and j+1 and swap if j>j+1.
+	//       On the last iteration of the outer loop, 
+	// note: d0 is i, d4 is j, d3 is N, d1 & d2 are temp (?)
+	move.l	d3, d0			// move n to d0 (start i as N)
+	move.l	#0, d4			// start j at 0
+	lsl.l	#2, d0			// mult i by 4
+
+	LOOPI:
+		subi.l	#4, d0			// decrement i; now i is pointing to the last element that will be compared. (on first iteration, i=N-1)
+
+
+
+		clr.l	d4				// set j to 0
+		LOOPJ:
+			// Compare [j] with [j+1].  If [j] > [j+1], swap [j] and [j+1].
+			move.l	0(a0,d4), d1		// put [j] into d1
+			move.l	4(a0,d4), d2		// put [j+1] into d2
+			cmp.l	d1, d2				// compare [j] with [j+1]
+			bge		NOSWAP				// if d2 ([j+1]) >= d1 ([j]), don't swap.
+				// Swap [j] and [j+1].
+				move.l	d1, 4(a0,d4) 		// put d1 ([j]) into [j+1]
+				move.l	d2, (a0,d4)			// put d2 ([j+1]) into [j]
+			NOSWAP:
+
+			addi.l	#4, d4			// increment j
+			cmp.l	d0, d4			// compare i and j, and
+			bne.s	LOOPJ			// loop back to inner loop if j hasn't reached i
+
+		cmpi.l	#4, d0			// compare i to 1
+		bne.s	LOOPI			// go back to outer loop if i hasn't gotten down to 1
+	
+	rts
+}
+
+
+
 int main(void)
 {
 	// Setup
@@ -138,18 +185,23 @@ int main(void)
 	}
 	
 	// Wait for either sw1 or sw3 to be pressed, then sort correctly
-	while(true)
+	while(1)
 	{
 		if(get_SW1_v1())
 		{
 			while(get_SW1_v1()) {} // wait for SW1 to be released
-			
+			sortAscending((int)a, n);
+			printf("After sorting ascending:\n");
+			for(i = 0; i < n; i++)
+			{
+				printf("a[%d] = %d\n", i, a[i]);
+			}
 		}
 
 		if(get_SW3_v1())
 		{
 			while(get_SW3_v1()) {} // wait for SW3 to be released
-			
+			// Jump to assembly code to sort descending
 		}
 	}
 	//  if sw1 sort ascending and display on LEDs
