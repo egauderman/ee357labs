@@ -110,7 +110,7 @@ int main(void)
   		if(get_SW1_v1()){
 			mycount++;
   		}
-  		if(get_SW3_v1()){		
+  		if(get_SW3_v1()){
 			mycount--;
   		}
 		leds_display(mycount);
@@ -148,7 +148,21 @@ int main(void)
 		printf("a[%d] = %d\n", i, a[i]);
 	}
 	
-	//wait for either sw1 or sw3 to be pressed,
+	// Wait for either sw1 or sw3 to be pressed, then sort correctly
+	while(true)
+	{
+		if(get_SW1_v1())
+		{
+			while(get_SW1_v1()) {} // wait for SW1 to be released
+			
+		}
+
+		if(get_SW3_v1())
+		{
+			while(get_SW3_v1()) {} // wait for SW3 to be released
+			
+		}
+	}
 	//  if sw1 sort ascending and display on LEDs
 	//  else if sw3 sort descending and display on LEDs
 	
