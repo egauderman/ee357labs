@@ -94,28 +94,17 @@ void leds_display(unsigned char cnt)
 	MCF_GPIO_PORTTC = cnt;
 
 }
+
 int main(void)
 {
+	// Setup
 	int n;
 	int i = 0;
 	int * a;
 	int k;
-	//int counter = 0;
-	//unsigned char mycount = 0;
 
 	init_gpio();
-
-  	/*
-	while (1){
-  		if(get_SW1_v1()){
-			mycount++;
-  		}
-  		if(get_SW3_v1()){
-			mycount--;
-  		}
-		leds_display(mycount);
-  	}
-	*/
+	
 	
 	
 	// Wait until sw1 is pressed
