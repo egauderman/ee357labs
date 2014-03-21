@@ -6,6 +6,7 @@
 
 #include "support_common.h" /* include peripheral declarations and more */
 #include "usc_support.h"
+#include <stdlib.h>
 #if (CONSOLE_IO_SUPPORT || ENABLE_UART_SUPPORT)
 /* Standard IO is only possible if Console or UART support is enabled. */
 #include <stdio.h>
@@ -97,6 +98,7 @@ int main(void)
 {
 	int n;
 	int i = 0;
+	int * a;
 	//int counter = 0;
 	//unsigned char mycount = 0;
 
@@ -118,14 +120,18 @@ int main(void)
 	// Wait until sw1 is pressed
 	while(!get_SW1_v1()) {}
 	while(get_SW1_v1()) {}
-	// Get the value on the switches, store to N
 	
+	// Get the value on the switches, store to n
+	asm(clr.l d0);				// clear upper bits of d0
+	asm(move.b 0x40100044, d0);	// put current value of switches into d0
+	asm(lsr.l #4, d0);			// shift d0 4 bits to the right so that d0 holds the actual value
+	asm(move.l d0, n);			// put the number into variable n
+	printf("%d", n);
 	
-	asm(move.l d1, n);
+	// Allocate memory for a[n]
+	a = (int*) malloc(n*4);
 	
-	//declare int a[N]
-	
-	// Note: this is a for-loop, iterating through a
+	// Note: this is a for-loop, iterating through a.
 	i = 0;
 	while(i < n)
 	{
@@ -142,5 +148,6 @@ int main(void)
 	//  if sw1 sort ascending and display on LEDs
 	//  else if sw3 sort descending and display on LEDs
 	
-	//free the memory used for a?
+	// Free the memory used for a
+	free(a);
 }
