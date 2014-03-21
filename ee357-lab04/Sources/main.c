@@ -99,6 +99,7 @@ int main(void)
 	int n;
 	int i = 0;
 	int * a;
+	int k;
 	//int counter = 0;
 	//unsigned char mycount = 0;
 
@@ -126,22 +127,25 @@ int main(void)
 	asm(move.b 0x40100044, d0);	// put current value of switches into d0
 	asm(lsr.l #4, d0);			// shift d0 4 bits to the right so that d0 holds the actual value
 	asm(move.l d0, n);			// put the number into variable n
-	printf("%d", n);
+	printf("n = %d\n", n);
 	
 	// Allocate memory for a[n]
-	a = (int*) malloc(n*4);
+	a = (int*) malloc((unsigned long)n*4);
 	
-	// Note: this is a for-loop, iterating through a.
-	i = 0;
-	while(i < n)
+	// Iterate through a and get the value for each one
+	for(i = 0; i < n; i++)
 	{
 		// Wait until sw1 is pressed
 		while(!get_SW1_v1()) {}
 		while(get_SW1_v1()) {}
 
 		// Get the value on the switches, store to a[i]
-		
-		i++;
+		asm(clr.l d0);				// clear upper bits of d0
+		asm(move.b 0x40100044, d0);	// put current value of switches into d0
+		asm(lsr.l #4, d0);			// shift d0 4 bits to the right so that d0 holds the actual value
+		asm(move.l d0, k);			// put the number into temp variable k
+		a[i] = k;
+		printf("a[%d] = %d\n", i, a[i]);
 	}
 	
 	//wait for either sw1 or sw3 to be pressed,
