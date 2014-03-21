@@ -206,6 +206,7 @@ int main(void)
 	asm(move.b 0x40100044, d0);	// put current value of switches into d0
 	asm(lsr.l #4, d0);			// shift d0 4 bits to the right so that d0 holds the actual value
 	asm(move.l d0, n);			// put the number into variable n
+	leds_display((unsigned char)n);
 	printf("n = %d\n", n);
 	
 	// Allocate memory for a[n]
@@ -224,8 +225,10 @@ int main(void)
 		asm(lsr.l #4, d0);			// shift d0 4 bits to the right so that d0 holds the actual value
 		asm(move.l d0, k);			// put the number into temp variable k
 		a[i] = k;
+		leds_display((unsigned char)a[i]);
 		printf("a[%d] = %d\n", i, a[i]);
 	}
+	leds_display((unsigned char)0);
 	
 	// Wait for either sw1 or sw3 to be pressed, then sort correctly
 	printf("Press SW1 to sort ascending or press SW3 to sort descending.\n");
@@ -240,8 +243,10 @@ int main(void)
 			printf("After sorting ascending:\n");
 			for(i = 0; i < n; i++)
 			{
+				leds_display((unsigned char)a[i]);
 				printf("a[%d] = %d\n", i, a[i]);
 			}
+			leds_display((unsigned char)0);
 
 			printf("Press SW1 to sort ascending or press SW3 to sort descending.\n");
 		}
@@ -255,8 +260,10 @@ int main(void)
 			printf("After sorting descending:\n");
 			for(i = 0; i < n; i++)
 			{
+				leds_display((unsigned char)a[i]);
 				printf("a[%d] = %d\n", i, a[i]);
 			}
+			leds_display((unsigned char)0);
 
 			printf("Press SW1 to sort ascending or press SW3 to sort descending.\n");
 		}
