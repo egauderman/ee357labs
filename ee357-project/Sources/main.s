@@ -26,7 +26,7 @@ _main:
 main:	
 	// Load program one instruction at a time into memory
 	// Change these lines to change the program
-	move.l 	CODE, a0
+	move.l 	#CODE, a0
 	move.l 	#%00001000000100000000000000001111, (a0)+
 	move.l 	#%00000100000001000000000000000000, (a0)+
 	move.l 	#%00000100000011000000000000000000, (a0)+
@@ -44,7 +44,7 @@ main:
 	move.l 	#%00000000000000000000000000000000, (a0)+
 	
 	// Init program counter
-	move.l	CODE, a0
+	move.l	#CODE, a0
 	move.l	a0, PPC
 	
 	// Main processing loop
