@@ -24,6 +24,21 @@ ENDLOC:	.ds.l 1
 
 _main:
 main:	
+	// Initialize the LED's
+	move.l 	#0x0,d0
+	move.b 	d0,0x4010006F // Set pins to be used GPIO
+	move.l 	#0xFFFFFFFF,d0
+	move.b 	d0,0x40100027 // Set LED's as output
+
+	// Initial value 0000 for the LED's
+	move.b 	#0x5,d1
+	move.b 	d1,0x4010000F
+	
+	// Initialize the Switches
+	move.l 	#0x0000000F,d0
+	move.b 	d0,0x40100074 // Set pins to be used GPIO
+	move.b 	d0,0x4010002C // Set Switches as input
+
 	// Load program one instruction at a time into memory
 	// Change these lines to change the program
 	move.l 	#CODE, a0
@@ -110,7 +125,7 @@ ADD:	clr.l 	d1
 		bra		main_loop_return
 	
 		
-ADDI:	clr.l 	d0
+ADDI:	clr.l 	d1
 		bra		main_loop_return
 		
 
@@ -137,10 +152,29 @@ READS:	clr.l 	d1
 		bra		main_loop_return
 
 
-DIS:	clr.l 	d1
+DIS:	move.l	d0, d1
+		lsr.l	#8, d1
+		lsr.l	#8, d1
+		lsr.l	#7, d1
+		andi.l	#%111, d1
+		jsr		GET_REG_D2
+		move.l	d1, d2
+		
+		move.l 	d1,0x4010000F
+
 		bra		main_loop_return
 
 
 END:	clr.l 	d1
 		bra		inflp
+		
+// Precondition: put register number in d2 (i.e. 000 or 100 or 010)
+// Result: The value in given register will be in d2
+// Note: Clobbers a1	
+GET_REG_D2:
+		lsl.l	#2, d2
+		move.l	#R0, a1
+		move.l	(a1,d2), d2
+		
+		rts
 
