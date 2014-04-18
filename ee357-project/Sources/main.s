@@ -109,7 +109,38 @@ ADD:	clr.l 	d0
 		bra		main_loop_return
 	
 		
-ADDI:	clr.l 	d0
+ADDI:	clr.l 	d1
+
+		move.l	d0, d1	// retrieve code again to obtain operands
+		andi.l	#$000FFFFF, d1	// obtain immediate value
+		move.l	d1, d2		// d2 = #Imm
+		
+		move.l	d0, d1	// retrieve code again to obtain operands
+		lsr.l	#8, d1
+		lsr.l	#8, d1
+		lsr.l	#4, d1
+		andi.l	#$00700000, d1
+		move.l	d1, d3		// d3 = rt (register index)
+		
+		move.l	d0, d1	// retrieve code again to obtain operands
+		lsr.l	#8, d1
+		lsr.l	#8, d1
+		lsr.l	#7, d1
+		andi.l	#$03800000, d1
+		move.l	d1, d4		// d4 = rs (register index)
+		
+		muls.w	#4, d3		// multiply offset by 4
+		move.l	d3, d5		// load a1 with address (e.g. 000)
+		add.l	R0, d5		// d5 = address of the register for rt
+		
+		move.l	d4, d6		// load a2 with address (e.g. 001)
+		muls.w	#4, d6		// multiply offset by 4
+		add.l	R0, d6		// d6 = address of the register for rs
+		
+		add.l	d2, d6		// add immediate value (from d2) to the immediate value of rt
+		
+		// Result: rs = rt + #Imm
+		
 		bra		main_loop_return
 		
 
@@ -117,7 +148,7 @@ LOAD:	clr.l 	d0
 		bra		main_loop_return
 
 
-BE:	clr.l 	d0
+BE:		clr.l 	d0
 		bra		main_loop_return
 
 
