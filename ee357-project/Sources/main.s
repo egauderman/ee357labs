@@ -53,7 +53,8 @@ main:
 		move.l	PPC, a0
 		
 		// 2a) determine OPCODE
-		move.l	(a0), d1
+		move.l	(a0), d0
+		move.l	d0, d1
 		lsr.l	#8, d1
 		lsr.l	#8, d1
 		lsr.l	#8, d1
@@ -105,7 +106,7 @@ inflp:	bra.s	inflp
 		
 //------ Defines subroutines here ------- //
 //------  Replace sub1 definition ------- //
-ADD:	clr.l 	d0
+ADD:	clr.l 	d1
 		bra		main_loop_return
 	
 		
@@ -119,55 +120,60 @@ ADDI:	clr.l 	d1
 		lsr.l	#8, d1
 		lsr.l	#8, d1
 		lsr.l	#4, d1
-		andi.l	#$00700000, d1
+		andi.l	#%111, d1
 		move.l	d1, d3		// d3 = rt (register index)
 		
 		move.l	d0, d1	// retrieve code again to obtain operands
 		lsr.l	#8, d1
 		lsr.l	#8, d1
 		lsr.l	#7, d1
-		andi.l	#$03800000, d1
+		andi.l	#%111, d1
 		move.l	d1, d4		// d4 = rs (register index)
 		
 		muls.w	#4, d3		// multiply offset by 4
-		move.l	d3, d5		// load a1 with address (e.g. 000)
-		add.l	R0, d5		// d5 = address of the register for rt
+		move.l	d3, a1		// load a1 with address (e.g. 000)
+		add.l	#R0, a1		// d5 = address of the register for rt
 		
-		move.l	d4, d6		// load a2 with address (e.g. 001)
-		muls.w	#4, d6		// multiply offset by 4
-		add.l	R0, d6		// d6 = address of the register for rs
+		muls.w	#4, d4		// multiply offset by 4
+		move.l	d4, a2		// load a2 with address (e.g. 001)
+		add.l	#R0, a2		// d6 = address of the register for rs
 		
-		add.l	d2, d6		// add immediate value (from d2) to the immediate value of rt
+		// TODO: a1 and a2 have the correct addresses of rt and rs (e.g., R1 and R0)
+		// Now the sum of the immediate value and the value at rt must be moved to rs
 		
 		// Result: rs = rt + #Imm
 		
 		bra		main_loop_return
 		
 
-LOAD:	clr.l 	d0
+LOAD:	clr.l 	d1
+
+
 		bra		main_loop_return
 
 
-BE:		clr.l 	d0
+
+BE:		clr.l 	d1
+
 		bra		main_loop_return
 
 
-BNE:	clr.l 	d0
+BNE:	clr.l 	d1
 		bra		main_loop_return
 
 
-SUBI:	clr.l 	d0
+SUBI:	clr.l 	d1
 		bra		main_loop_return
 
 
-READS:	clr.l 	d0
+READS:	clr.l 	d1
 		bra		main_loop_return
 
 
-DIS:	clr.l 	d0
+DIS:	clr.l 	d1
 		bra		main_loop_return
 
 
-END:	clr.l 	d0
+END:	clr.l 	d1
 		bra		inflp
 
