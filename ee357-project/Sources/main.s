@@ -53,7 +53,8 @@ main:
 		move.l	PPC, a0
 		
 		// 2a) determine OPCODE
-		move.l	(a0), d1
+		move.l	(a0), d0
+		move.l	d0, d1
 		lsr.l	#8, d1
 		lsr.l	#8, d1
 		lsr.l	#8, d1
@@ -105,7 +106,7 @@ inflp:	bra.s	inflp
 		
 //------ Defines subroutines here ------- //
 //------  Replace sub1 definition ------- //
-ADD:	clr.l 	d0
+ADD:	clr.l 	d1
 		bra		main_loop_return
 	
 		
@@ -113,30 +114,33 @@ ADDI:	clr.l 	d0
 		bra		main_loop_return
 		
 
-LOAD:	clr.l 	d0
+LOAD:	clr.l 	d1
+
+
 		bra		main_loop_return
 
 
-BE:	clr.l 	d0
+BE:		clr.l 	d1
+
 		bra		main_loop_return
 
 
-BNE:	clr.l 	d0
+BNE:	clr.l 	d1
 		bra		main_loop_return
 
 
-SUBI:	clr.l 	d0
+SUBI:	clr.l 	d1
 		bra		main_loop_return
 
 
-READS:	clr.l 	d0
+READS:	clr.l 	d1
 		bra		main_loop_return
 
 
-DIS:	clr.l 	d0
+DIS:	clr.l 	d1
 		bra		main_loop_return
 
 
-END:	clr.l 	d0
+END:	clr.l 	d1
 		bra		inflp
 
