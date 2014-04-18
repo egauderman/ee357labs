@@ -161,13 +161,14 @@ DIS:	move.l	d0, d1		// Copy command into d1
 		move.l	d1, d2		// Get the value of the given register and place into d2
 		jsr		GET_REG_D2
 		
-		move.l 	d2,0x4010000F	// Light up LED's with value of d2 (which is the value of the given register)
+		move.b 	d2, 0x4010000F	// Light up LED's with value of d2 (which is the value of the given register)
 
 		bra		main_loop_return
 
-
-END:	clr.l 	d1
-		bra		inflp
+// END command that causes program to hang with nothing else to do
+END:	move.b 	#0xF, d1		// Light up LED's with 1111
+		move.b 	d1, 0x4010000F
+		bra		inflp			// Loop forever
 		
 // Precondition: put register number in d2 (i.e. 000 or 100 or 010)
 // Result: The value in given register will be in d2
