@@ -31,7 +31,7 @@ main:
 	move.b 	d0,0x40100027 // Set LED's as output
 
 	// Initial value 0000 for the LED's
-	move.b 	#0x5,d1
+	move.b 	#0x0,d1
 	move.b 	d1,0x4010000F
 	
 	// Initialize the Switches
@@ -151,16 +151,17 @@ SUBI:	clr.l 	d1
 READS:	clr.l 	d1
 		bra		main_loop_return
 
-
-DIS:	move.l	d0, d1
-		lsr.l	#8, d1
+// Display value of given register on LEDs
+DIS:	move.l	d0, d1		// Copy command into d1
+		lsr.l	#8, d1		// Shift by 23 bits to remove unused bits in DIS command
 		lsr.l	#8, d1
 		lsr.l	#7, d1
-		andi.l	#%111, d1
-		jsr		GET_REG_D2
-		move.l	d1, d2
+		andi.l	#%111, d1	// AND with 111 to retrieve only the 3 lower-order bits (corresponds to the given register)
 		
-		move.l 	d1,0x4010000F
+		move.l	d1, d2		// Get the value of the given register and place into d2
+		jsr		GET_REG_D2
+		
+		move.l 	d2,0x4010000F	// Light up LED's with value of d2 (which is the value of the given register)
 
 		bra		main_loop_return
 
@@ -172,9 +173,9 @@ END:	clr.l 	d1
 // Result: The value in given register will be in d2
 // Note: Clobbers a1	
 GET_REG_D2:
-		lsl.l	#2, d2
-		move.l	#R0, a1
-		move.l	(a1,d2), d2
+		lsl.l	#2, d2			// Multiply by 4
+		move.l	#R0, a1			// Move address of R0 into a1
+		move.l	(a1,d2), d2		// Offset R0 by d2 and put the value of this new address into d2
 		
 		rts
 
