@@ -11,6 +11,7 @@ R7:		.ds.l 1
 
 // Reserve space for 11 32-bit instructions in memory
 // Change this line to support more/less instructions
+// The number after .ds.l should be the number of desired instructions, not including the END instruction (program automaticaly adds an END instruction)
 CODE:	.ds.l 11
 
 // Always ends the program
@@ -39,9 +40,11 @@ main:
 	move.b 	d0,0x40100074 // Set pins to be used GPIO
 	move.b 	d0,0x4010002C // Set Switches as input
 
+
+
+	move.l 	#CODE, a0 // start a0 at the location in which to load the instructions
 	// Load program one instruction at a time into memory
 	// Change these lines to change the program
-	move.l 	#CODE, a0
 	move.l 	#%00001000000100000000000000001111, (a0)+
 	move.l 	#%00000100000001000000000000000000, (a0)+
 	move.l 	#%00000100000011000000000000000000, (a0)+
@@ -122,6 +125,11 @@ inflp:	bra.s	inflp
 //------ Defines subroutines here ------- //
 //------  Replace sub1 definition ------- //
 ADD:	clr.l 	d1
+		
+		
+		
+		
+		
 		bra		main_loop_return
 	
 		
