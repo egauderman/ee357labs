@@ -155,6 +155,7 @@ ADDI:	clr.l 	d1
 		
 		// TODO: a1 and a2 have the correct addresses of rt and rs (e.g., R1 and R0)
 		// Now the sum of the immediate value and the value at rt must be moved to rs
+		add.l	(a1), (a2)
 		
 		// Result: rs = rt + #Imm
 		
