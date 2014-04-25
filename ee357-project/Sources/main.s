@@ -169,12 +169,70 @@ LOAD:	clr.l 	d1
 
 
 BE:		clr.l 	d1
-
+		//retrieve rt = a1, bits 7-9 (index 1), shift 23
+		move.l	d0,d1
+		lsr.l	#8,d1
+		lsr.l	#8,d1
+		lsr.l	#7,d1
+		andi.l	#%111,d1
+		lsl.l	#2,d1			//multiply by 4
+		move.l	R0,a1
+		move.l	0(a1,d1),a1
+		//retrieve rs = a2, bits 10-12, shift 20
+		move.l	d0,d1
+		lsr.l	#8,d1
+		lsr.l	#8,d1
+		lsr.l	#4,d1
+		andi.l	#%111,d1
+		lsl.l	#2,d1			//multiply by 4
+		move.l	R0,a1
+		move.l	0(a1,d1),a2
+		//retrieve #imm = d2, bits 13-32, shit none
+		move.l	d0,d1
+		andi.l	#$FFFFF,d1
+		move.l	d1,d2
+		
+		move.l	(a1),d4			//d4 contains value in rt
+		move.l	(a2),d5			//d5 contains value in rs
+		cmp.l	d4,d5
+		beq		eq				//if they are equal, incr PPC. else return.
 		bra		main_loop_return
-
+	eq:	add.l	d2,a0			//add imm to PPC
+		move.l	a0,PPC
+		bra		main_loop		//we do not want to increment PPC again
 
 BNE:	clr.l 	d1
+		//retrieve rt = a1, bits 7-9 (index 1), shift 23
+		move.l	d0,d1
+		lsr.l	#8,d1
+		lsr.l	#8,d1
+		lsr.l	#7,d1
+		andi.l	#%111,d1
+		lsl.l	#2,d1			//multiply by 4
+		move.l	R0,a1
+		move.l	0(a1,d1),a1
+		//retrieve rs = a2, bits 10-12, shift 20
+		move.l	d0,d1
+		lsr.l	#8,d1
+		lsr.l	#8,d1
+		lsr.l	#4,d1
+		andi.l	#%111,d1
+		lsl.l	#2,d1			//multiply by 4
+		move.l	R0,a1
+		move.l	0(a1,d1),a2
+		//retrieve #imm = d2, bits 13-32, shit none
+		move.l	d0,d1
+		andi.l	#$FFFFF,d1
+		move.l	d1,d2
+		
+		move.l	(a1),d4			//d4 contains value in rt
+		move.l	(a2),d5			//d5 contains value in rs
+		cmp.l	d4,d5
+		bne		neq				//if they are not equal, incr PPC. else return.
 		bra		main_loop_return
+	neq:add.l	d2,a0			//add imm to PPC
+		move.l	a0,PPC
+		bra		main_loop		//we do not want to increment PPC again
 
 
 SUBI:	clr.l 	d1
@@ -182,6 +240,19 @@ SUBI:	clr.l 	d1
 
 
 READS:	clr.l 	d1
+		//retrieve rt = a1, bits 7-9 (index 1), shift 23
+		move.l	d0,d1
+		lsr.l	#8,d1
+		lsr.l	#8,d1
+		lsr.l	#7,d1
+		andi.l	#%111,d1
+		lsl.l	#2,d1			//multiply by 4
+		move.l	R0,a1
+		move.l	0(a1,d1),a1
+		//get value from switches into d2
+		move.b	$40100044, d2
+		lsr.l	#4, d2			//shift d2 right 4 bits so that the switches represent a number
+		move.l	d2,(a1)			//move value of switches into rt
 		bra		main_loop_return
 
 // Display value of given register on LEDs
