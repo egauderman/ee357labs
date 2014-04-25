@@ -121,14 +121,16 @@ main:
 //------- infinitely...Never hits rts --- //		
 inflp:	bra.s	inflp
 		rts
-		
-//------ Defines subroutines here ------- //
-//------  Replace sub1 definition ------- //
+
+
+
+//====================================//
+//============= COMMANDS =============//
+//====================================//
+
 ADD:	clr.l 	d1
 		
-		
-		
-		
+		move.l d0, d1
 		
 		bra		main_loop_return
 	
@@ -285,7 +287,7 @@ END:	move.b 	#0xF, d1		// Light up LED's with 1111
 
 
 
-// Precondition: put register number in d2 (i.e. 000 or 100 or 010)
+// Precondition: put register number in d2 (000 through 111 inclusive)
 // Result: The value in given register will be in d2
 // Note: Does not clobber anything
 GET_REG_D2:
@@ -298,3 +300,16 @@ GET_REG_D2:
 		move.l	(a7)+, a1		// pop the stack to put back the old value of a1
 		rts
 
+// Precondition: put register number in d3 (000 through 111 inclusive) and the desired value in d2
+// Result: The value in the register number passed in through d3 will be set to whatever's in d2
+// Note: Does not clobber anything. d2 and d3 will not be affected either.
+SAVE_D2_TO_REG_D3:
+		move.l	a1, -(a7)		// push a1's old value onto the stack to avoid clobbering (a7 is SP)
+		
+		lsl.l	#2, d3			// multiply d3 by 4
+		move.l	#R0, a1			// Start a1 at address of R0
+		move.l	d2, (a1,d3)		// Offset R0 by d3 and put the value in d2 into that location
+		lsr.l	#2, d3			// un-multiply d3 by 4
+		
+		move.l	(a7)+, a1		// pop the stack to put back the old value of a1
+		rts
