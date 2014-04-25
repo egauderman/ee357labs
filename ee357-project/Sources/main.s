@@ -130,7 +130,7 @@ inflp:	bra.s	inflp
 
 ADD:	clr.l 	d1
 		
-		move.l d0, d1
+		//TODO Eric will do this
 		
 		bra		main_loop_return
 	
