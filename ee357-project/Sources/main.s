@@ -247,6 +247,33 @@ BNE:	clr.l 	d1
 
 
 SUBI:	clr.l 	d1
+		//retrieve rt = a1, bits 7-9 (index 1), shift 23
+		move.l	d0,d1
+		lsr.l	#8,d1
+		lsr.l	#8,d1
+		lsr.l	#7,d1
+		andi.l	#%111,d1
+		lsl.l	#2,d1			//multiply by 4
+		move.l	R0,a1
+		move.l	0(a1,d1),a1
+		//retrieve rs = a2, bits 10-12, shift 20
+		move.l	d0,d1
+		lsr.l	#8,d1
+		lsr.l	#8,d1
+		lsr.l	#4,d1
+		andi.l	#%111,d1
+		lsl.l	#2,d1			//multiply by 4
+		move.l	R0,a1
+		move.l	0(a1,d1),a2
+		//retrieve #imm = d2, bits 13-32, shit none
+		move.l	d0,d1
+		andi.l	#$FFFFF,d1
+		move.l	d1,d2
+		
+		move.l	(a2),d3			//d3 holds value of rs
+		sub.l	d2,d3			//d3 - d2 (rs - #imm)
+		move.l	d3,(a1)			//move value into rt (a1)
+		
 		bra		main_loop_return
 
 
