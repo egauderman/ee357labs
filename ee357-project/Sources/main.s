@@ -26,9 +26,9 @@ ENDLOC:	.ds.l 1
 _main:
 main:	
 	// Initialize the LED's
-	move.l 	#0x0,d0
+	move.b 	#0x0,d0
 	move.b 	d0,0x4010006F // Set pins to be used GPIO
-	move.l 	#0xFFFFFFFF,d0
+	move.b 	#0xFFFFFFFF,d0
 	move.b 	d0,0x40100027 // Set LED's as output
 
 	// Initial value 0000 for the LED's
@@ -36,7 +36,7 @@ main:
 	move.b 	d1,0x4010000F
 	
 	// Initialize the Switches
-	move.l 	#0x0000000F,d0
+	move.b 	#0x0F,d0
 	move.b 	d0,0x40100074 // Set pins to be used GPIO
 	move.b 	d0,0x4010002C // Set Switches as input
 
@@ -172,11 +172,10 @@ ADDI:	clr.l 	d1
 		bra		main_loop_return
 		
 
-LOAD:	clr.l 	d1
-
+LOAD:	// TODO: complete LOAD command
+		
 
 		bra		main_loop_return
-
 
 
 BE:		clr.l 	d1
@@ -211,6 +210,7 @@ BE:		clr.l 	d1
 	eq:	add.l	d2,a0			//add imm to PPC
 		move.l	a0,PPC
 		bra		main_loop		//we do not want to increment PPC again
+
 
 BNE:	clr.l 	d1
 		//retrieve rt = a1, bits 7-9 (index 1), shift 23
@@ -293,6 +293,7 @@ READS:	clr.l 	d1
 		move.l	d2,(a1)			//move value of switches into rt
 		bra		main_loop_return
 
+
 // Display value of given register on LEDs
 DIS:	move.l	d0, d1		// Copy command into d1
 		lsr.l	#8, d1		// Shift by 23 bits to remove unused bits in DIS command
@@ -307,12 +308,17 @@ DIS:	move.l	d0, d1		// Copy command into d1
 
 		bra		main_loop_return
 
+
 // END command that causes program to hang with nothing else to do
-END:	move.b 	#0xF, d1		// Light up LED's with 1111
+END:	move.b 	#0xFF, d1		// Light up LED's with 1111
 		move.b 	d1, 0x4010000F
 		bra		inflp			// Loop forever
 
 
+
+//=====================================//
+//========== HELPER ROUTINES ==========//
+//=====================================//
 
 // Precondition: put register number in d2 (000 through 111 inclusive)
 // Result: The value in given register will be in d2
@@ -339,4 +345,19 @@ SAVE_D2_TO_REG_D3:
 		lsr.l	#2, d3			// un-multiply d3 by 4
 		
 		move.l	(a7)+, a1		// pop the stack to put back the old value of a1
+		rts
+
+// Subroutine for waiting so user can see LED output
+// Note: Change #0x5FFFFF to make waiting period longer/shorter
+// Note: Does not clobber anything
+WAIT:
+		move.l	d2, -(a7)		// push d2's value onto the stack to avoid clobbering (a7 is SP)
+		
+		move.l	#0x5FFFFF, d2	// initialize counter
+	
+	WAIT_LOOP:
+			subq.l	#0x1, d2	// decrement counter by 1
+			bne.s 	WAIT_LOOP	// loop until counter reaches 0
+		
+		move.l	(a7)+, d2		// pop the stack to restore value of d2
 		rts
