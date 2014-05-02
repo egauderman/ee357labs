@@ -198,6 +198,12 @@ ADDI:	clr.l 	d1
 		andi.l	#$000FFFFF, d1	// obtain immediate value
 		move.l	d1, d2		// d2 = #Imm
 		
+		// Sign-extend d2 from 20 bits to 32 bits:
+		lsl.l	#8,d2
+		lsl.l	#4,d2
+		asr.l	#8,d2
+		asr.l	#4,d2
+		
 		move.l	d0, d1	// retrieve code again to obtain operands
 		lsr.l	#8, d1
 		lsr.l	#8, d1
@@ -298,7 +304,9 @@ BNE:	clr.l 	d1
 		move.l	d0,d1
 		andi.l	#$FFFFF,d1
 		move.l	d1,d2
-		lsl.l	#8,d2			// these shifts accomplish a sign extension on d2 (since imm is 20 bit stored in 32-bit reg)
+		
+		// Sign-extend d2 from 20 bits to 32 bits:
+		lsl.l	#8,d2
 		lsl.l	#4,d2
 		asr.l	#8,d2
 		asr.l	#4,d2
@@ -336,6 +344,12 @@ SUBI:	clr.l 	d1
 		move.l	d0,d1
 		andi.l	#$FFFFF,d1
 		move.l	d1,d2
+		
+		// Sign-extend d2 from 20 bits to 32 bits:
+		lsl.l	#8,d2
+		lsl.l	#4,d2
+		asr.l	#8,d2
+		asr.l	#4,d2
 		
 		move.l	(a2),d3			//d3 holds value of rs
 		sub.l	d2,d3			//d3 - d2 (rs - #imm)
