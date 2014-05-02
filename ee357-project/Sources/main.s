@@ -242,8 +242,8 @@ BE:		clr.l 	d1
 		lsr.l	#7,d1
 		andi.l	#%111,d1
 		lsl.l	#2,d1			//multiply by 4
-		move.l	R0,a1
-		move.l	0(a1,d1),a1
+		move.l	#R0,a1
+		add.l	d1,a1
 		//retrieve rs = a2, bits 10-12, shift 20
 		move.l	d0,d1
 		lsr.l	#8,d1
@@ -251,12 +251,16 @@ BE:		clr.l 	d1
 		lsr.l	#4,d1
 		andi.l	#%111,d1
 		lsl.l	#2,d1			//multiply by 4
-		move.l	R0,a1
-		move.l	0(a1,d1),a2
+		move.l	#R0,a2
+		add.l	d1,a2
 		//retrieve #imm = d2, bits 13-32, shit none
 		move.l	d0,d1
 		andi.l	#$FFFFF,d1
 		move.l	d1,d2
+		lsl.l	#8,d2			// these shifts accomplish a sign extension on d2 (since imm is 20 bit stored in 32-bit reg)
+		lsl.l	#4,d2
+		asr.l	#8,d2
+		asr.l	#4,d2
 		
 		move.l	(a1),d4			//d4 contains value in rt
 		move.l	(a2),d5			//d5 contains value in rs
@@ -276,8 +280,8 @@ BNE:	clr.l 	d1
 		lsr.l	#7,d1
 		andi.l	#%111,d1
 		lsl.l	#2,d1			//multiply by 4
-		move.l	R0,a1
-		move.l	0(a1,d1),a1
+		move.l	#R0,a1
+		add.l	d1,a1
 		//retrieve rs = a2, bits 10-12, shift 20
 		move.l	d0,d1
 		lsr.l	#8,d1
@@ -285,12 +289,16 @@ BNE:	clr.l 	d1
 		lsr.l	#4,d1
 		andi.l	#%111,d1
 		lsl.l	#2,d1			//multiply by 4
-		move.l	R0,a1
-		move.l	0(a1,d1),a2
+		move.l	#R0,a2
+		add.l	d1,a2
 		//retrieve #imm = d2, bits 13-32, shit none
 		move.l	d0,d1
 		andi.l	#$FFFFF,d1
 		move.l	d1,d2
+		lsl.l	#8,d2			// these shifts accomplish a sign extension on d2 (since imm is 20 bit stored in 32-bit reg)
+		lsl.l	#4,d2
+		asr.l	#8,d2
+		asr.l	#4,d2
 		
 		move.l	(a1),d4			//d4 contains value in rt
 		move.l	(a2),d5			//d5 contains value in rs
@@ -310,8 +318,8 @@ SUBI:	clr.l 	d1
 		lsr.l	#7,d1
 		andi.l	#%111,d1
 		lsl.l	#2,d1			//multiply by 4
-		move.l	R0,a1
-		move.l	0(a1,d1),a1
+		move.l	#R0,a1
+		add.l	d1,a1
 		//retrieve rs = a2, bits 10-12, shift 20
 		move.l	d0,d1
 		lsr.l	#8,d1
@@ -319,8 +327,8 @@ SUBI:	clr.l 	d1
 		lsr.l	#4,d1
 		andi.l	#%111,d1
 		lsl.l	#2,d1			//multiply by 4
-		move.l	R0,a1
-		move.l	0(a1,d1),a2
+		move.l	#R0,a2
+		add.l	d1,a2
 		//retrieve #imm = d2, bits 13-32, shit none
 		move.l	d0,d1
 		andi.l	#$FFFFF,d1
@@ -341,8 +349,8 @@ READS:	clr.l 	d1
 		lsr.l	#7,d1
 		andi.l	#%111,d1
 		lsl.l	#2,d1			//multiply by 4
-		move.l	R0,a1
-		move.l	0(a1,d1),a1
+		move.l	#R0,a1
+		add.l	d1,a1
 		//get value from switches into d2
 		move.b	$40100044, d2
 		lsr.l	#4, d2			//shift d2 right 4 bits so that the switches represent a number
@@ -361,7 +369,8 @@ DIS:	move.l	d0, d1		// Copy command into d1
 		jsr		GET_REG_D2
 		
 		move.b 	d2, 0x4010000F	// Light up LED's with value of d2 (which is the value of the given register)
-
+		jsr		WAIT			// wait so user can see what's happening on LEDs
+		
 		bra		main_loop_return
 
 
@@ -409,7 +418,7 @@ SAVE_D2_TO_REG_D3:
 WAIT:
 		move.l	d2, -(a7)		// push d2's value onto the stack to avoid clobbering (a7 is SP)
 		
-		move.l	#0x5FFFFF, d2	// initialize counter
+		move.l	#0x2FFFFF, d2	// initialize counter
 	
 		WAIT_LOOP:
 			subq.l	#0x1, d2	// decrement counter by 1
