@@ -13,10 +13,6 @@ R7:		.ds.l 1
 // Change this line to support more/less instructions
 // The number after .ds.l should be the number of desired instructions, not including the END instruction (program automaticaly adds an END instruction)
 CODE:	.ds.l 11
-
-// Always ends the program
-// Do not remove
-ENDLOC:	.ds.l 1
 				
   		.text
 		.global _main
@@ -50,16 +46,12 @@ main:
 	move.l 	#%00000100000011000000000000000000, (a0)+
 	move.l 	#%11000011000000000000000000000000, (a0)+
 	move.l 	#%00001000010000000000000000001010, (a0)+
-	move.l 	#%00010010110000000000000000001000, (a0)+
-	move.l 	#%00000111001001000000000000000000, (a0)+
+	move.l 	#%00010010011000000000000000001000, (a0)+
+	move.l 	#%00000101011001000000000000000000, (a0)+
 	move.l 	#%00100000100100000000000000000001, (a0)+
-	move.l 	#%00011000000100001111111111111000, (a0)+
-	move.l 	#%10000001000000001111111111111000, (a0)+
-	move.l 	#%00100000100100000000000000000001, (a0)+
-	
-	// Load END instruction to memory
-	// Do not remove this
-	move.l 	#%00000000000000000000000000000000, (a0)+
+	move.l 	#%00011000000111111111111111110100, (a0)+
+	move.l 	#%10000001000000000000000000000001, (a0)+
+	move.l 	#%00000000100100000000000000000001, (a0)+
 	
 	// Init program counter
 	move.l	#CODE, a0
