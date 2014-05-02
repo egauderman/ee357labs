@@ -122,7 +122,8 @@ main:
 		
 	main_loop_return_no_inc_ppc:
 		// Wait to spread out commands
-		jsr		WAIT
+		// note: removing the jsr WAIT because it makes the program take a long time.
+		//jsr		WAIT
 		// Continue main loop
 		bra		main_loop
 
