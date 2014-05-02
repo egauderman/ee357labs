@@ -148,14 +148,20 @@ ADD:	clr.l 	d1
 		// Get register rd's number into d5
 		move.l	d0, d2		// move command into d2
 		andi.l	#%00000011100000000000000000000000, d2		// get register number
-		lsr.l	#23, d2
+		// Shift d2 right 23 bits
+		lsr.l	#8, d2
+		lsr.l	#8, d2
+		lsr.l	#7, d2
 		move.l	d2, d5
 		// d5 now holds rd's number (i.e. 0 to 7)
 		
 		// Get register rs's value into d6
 		move.l	d0, d2		// move command into d2
 		andi.l	#%00000000011100000000000000000000, d2		// get register number
-		lsr.l	#20, d2
+		// Shift d2 right 20 bits
+		lsr.l	#8, d2
+		lsr.l	#8, d2
+		lsr.l	#4, d2
 		jsr		GET_REG_D2
 		move.l	d2, d6
 		// d6 now holds rs's value
@@ -163,7 +169,10 @@ ADD:	clr.l 	d1
 		// Get register rt's value into d7
 		move.l	d0, d2		// move command into d2
 		andi.l	#%00000000000011100000000000000000, d2		// get register number
-		lsr.l	#17, d2
+		// Shift d2 right 17 bits
+		lsr.l	#8, d2
+		lsr.l	#8, d2
+		lsr.l	#1, d2
 		jsr		GET_REG_D2
 		move.l	d2, d7
 		// d7 now holds rt's value
