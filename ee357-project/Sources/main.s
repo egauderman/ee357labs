@@ -14,9 +14,6 @@ R7:		.ds.l 1
 // The number after .ds.l should be the number of desired instructions, including the END instruction
 CODE:	.ds.l 11
 
-// Reserve 64 32-bit words of data for the memory
-MEMORY:	.ds.l 64
-
 // Other initialization flags
   		.text
 		.global _main
@@ -152,7 +149,7 @@ ADD:	clr.l 	d1
 		lsr.l	#8, d2
 		lsr.l	#8, d2
 		lsr.l	#7, d2
-		// d5 now holds rd's number (i.e. 0 to 7)
+		// d2 now holds rd's number (i.e. 0 to 7)
 		move.l	d2, d5
 		// d5 now holds rd's number (i.e. 0 to 7)
 		
@@ -175,7 +172,7 @@ ADD:	clr.l 	d1
 		lsr.l	#8, d2
 		lsr.l	#8, d2
 		lsr.l	#1, d2
-		// d5 now holds rt's number (i.e. 0 to 7)
+		// d2 now holds rt's number (i.e. 0 to 7)
 		jsr		GET_REG_D2
 		move.l	d2, d7
 		// d7 now holds rt's value
@@ -237,9 +234,59 @@ ADDI:	clr.l 	d1
 		bra		main_loop_return
 		
 
-LOAD:	// TODO: complete LOAD command
+LOAD:	clr.l	d1
 		
-
+		// rt = Mem[rs + (#Imm + starting address of the memory)]
+		
+		// ADD rd, rs, rt => rd=rs+rt
+		
+		// Get register rt's number into d5
+		move.l	d0, d2		// move command into d2
+		andi.l	#%00000011100000000000000000000000, d2		// get register number
+		// Shift d2 right 23 bits
+		lsr.l	#8, d2
+		lsr.l	#8, d2
+		lsr.l	#7, d2
+		// d2 now holds rt's number (i.e. 0 to 7)
+		move.l	d2, d5
+		// d5 now holds rt's number (i.e. 0 to 7)
+		
+		// Get register rs's value into d6
+		move.l	d0, d2		// move command into d2
+		andi.l	#%00000000011100000000000000000000, d2		// get register number
+		// Shift d2 right 20 bits
+		lsr.l	#8, d2
+		lsr.l	#8, d2
+		lsr.l	#4, d2
+		// d5 now holds rs's number (i.e. 0 to 7)
+		jsr		GET_REG_D2
+		move.l	d2, d6
+		// d6 now holds rs's value
+		
+		// Get register rt's value into d7
+		move.l	d0, d2		// move command into d2
+		andi.l	#%00000000000011111111111111111111, d2		// get immediate value
+		move.l	d2, a1		// move immediate to a1
+		// Don't need to shift or sign-extend because immediate is unsigned
+		// d2 now holds immediate value
+		
+		
+		// Add rs (d6) to immediate (a1), result will be in d6
+		add.l	d6, a1
+		// Add the memory's starting location; let it be zero for now
+		//move.l	#0, d1
+		//add.l		d1,	a1
+		
+		// Get the data at location a1
+		move.l	(a1), d2
+		
+		// Put the data into the register with the number held in d5
+		move.l	d5, d3		// register's number goes into d3
+		// the data value is already in d2
+		jsr		SAVE_D2_TO_REG_D3
+		// done!
+		
+		
 		bra		main_loop_return
 
 
