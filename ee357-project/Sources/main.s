@@ -114,6 +114,9 @@ main:
 		addq.l	#4, a0
 		move.l	a0, PPC
 		
+	main_loop_return_no_inc_ppc:
+		// Wait to spread out commands
+		jsr		WAIT
 		// Continue main loop
 		bra		main_loop
 
@@ -212,7 +215,7 @@ BE:		clr.l 	d1
 		bra		main_loop_return
 	eq:	add.l	d2,a0			//add imm to PPC
 		move.l	a0,PPC
-		bra		main_loop		//we do not want to increment PPC again
+		bra		main_loop_return_no_inc_ppc		//we do not want to increment PPC again
 
 
 BNE:	clr.l 	d1
@@ -246,7 +249,7 @@ BNE:	clr.l 	d1
 		bra		main_loop_return
 	neq:add.l	d2,a0			//add imm to PPC
 		move.l	a0,PPC
-		bra		main_loop		//we do not want to increment PPC again
+		bra		main_loop_return_no_inc_ppc		//we do not want to increment PPC again
 
 
 SUBI:	clr.l 	d1
