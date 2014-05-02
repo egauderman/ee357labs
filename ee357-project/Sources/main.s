@@ -68,6 +68,10 @@ main:
 	
 	// Main processing loop
 	main_loop:
+		// Always set R0 to 0
+		clr.l	d0
+		move.l	d0, R0
+		
 		// 1) load instruction at PPC
 		move.l	PPC, a0
 		
