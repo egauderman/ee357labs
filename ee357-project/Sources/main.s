@@ -122,7 +122,39 @@ inflp:	bra.s	inflp
 
 ADD:	clr.l 	d1
 		
-		//TODO Eric will do this
+		// ADD rd, rs, rt => rd=rs+rt
+		
+		// Get register rd's number into d5
+		move.l	d0, d2		// move command into d2
+		andi.l	#%00000011100000000000000000000000, d2		// get register number
+		lsr.l	#23, d2
+		move.l	d2, d5
+		// d5 now holds rd's number (i.e. 0 to 7)
+		
+		// Get register rs's value into d6
+		move.l	d0, d2		// move command into d2
+		andi.l	#%00000000011100000000000000000000, d2		// get register number
+		lsr.l	#20, d2
+		jsr		GET_REG_D2
+		move.l	d2, d6
+		// d6 now holds rs's value
+		
+		// Get register rt's value into d7
+		move.l	d0, d2		// move command into d2
+		andi.l	#%00000000000011100000000000000000, d2		// get register number
+		lsr.l	#17, d2
+		jsr		GET_REG_D2
+		move.l	d2, d7
+		// d7 now holds rt's value
+		
+		// Add rs (d6) to rt (d7), result will be in d7
+		add.l	d6, d7
+		
+		// Put the sum into the register with the number held in d5
+		move.l	d5, d3		// register's number goes into d3
+		move.l	d7, d2		// the sum value goes into d2
+		jsr		SAVE_D2_TO_REG_D3
+		// done!
 		
 		bra		main_loop_return
 	
@@ -347,7 +379,7 @@ WAIT:
 		
 		move.l	#0x5FFFFF, d2	// initialize counter
 	
-	WAIT_LOOP:
+		WAIT_LOOP:
 			subq.l	#0x1, d2	// decrement counter by 1
 			bne.s 	WAIT_LOOP	// loop until counter reaches 0
 		
