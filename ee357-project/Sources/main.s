@@ -11,7 +11,7 @@ R7:		.ds.l 1
 
 // Reserve space for 11 32-bit instructions in memory
 // Change this line to support more/less instructions
-// The number after .ds.l should be the number of desired instructions, not including the END instruction (program automaticaly adds an END instruction)
+// The number after .ds.l should be the number of desired instructions, including the END instruction
 CODE:	.ds.l 11
 				
   		.text
