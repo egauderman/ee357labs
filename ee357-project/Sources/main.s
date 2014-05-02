@@ -13,11 +13,16 @@ R7:		.ds.l 1
 // Change this line to support more/less instructions
 // The number after .ds.l should be the number of desired instructions, including the END instruction
 CODE:	.ds.l 11
-				
+
+// Reserve 64 32-bit words of data for the memory
+MEMORY:	.ds.l 64
+
+// Other initialization flags
   		.text
 		.global _main
 		.global main
 		.include "../Project_Headers/ee357_asm_lib_hdr.s"
+
 
 _main:
 main:
