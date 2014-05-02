@@ -20,23 +20,32 @@ CODE:	.ds.l 11
 		.include "../Project_Headers/ee357_asm_lib_hdr.s"
 
 _main:
-main:	
+main:
 	// Initialize the LED's
-	move.b 	#0x0,d0
-	move.b 	d0,0x4010006F // Set pins to be used GPIO
-	move.b 	#0xFFFFFFFF,d0
-	move.b 	d0,0x40100027 // Set LED's as output
+	move.b 	#0x0, d0
+	move.b 	d0, 0x4010006F // Set pins to be used GPIO
+	move.b 	#0xFF, d0
+	move.b 	d0, 0x40100027 // Set LED's as output
 
 	// Initial value 0000 for the LED's
-	move.b 	#0x0,d1
-	move.b 	d1,0x4010000F
+	move.b 	#0x0, d1
+	move.b 	d1, 0x4010000F
 	
 	// Initialize the Switches
-	move.b 	#0x0F,d0
-	move.b 	d0,0x40100074 // Set pins to be used GPIO
-	move.b 	d0,0x4010002C // Set Switches as input
+	move.b 	#0x0F, d0
+	move.b 	d0, 0x40100074 // Set pins to be used GPIO
+	move.b 	d0, 0x4010002C // Set Switches as input
 
-
+	// Initialize Registers to 0
+	clr.l	d0
+	move.l	d0, R0
+	move.l	d0, R1
+	move.l	d0, R2
+	move.l	d0, R3
+	move.l	d0, R4
+	move.l	d0, R5
+	move.l	d0, R6
+	move.l	d0, R7
 
 	move.l 	#CODE, a0 // start a0 at the location in which to load the instructions
 	// Load program one instruction at a time into memory
@@ -102,8 +111,8 @@ main:
 		
 	main_loop_return:
 		// 3) increment PPC 
-		addq.l	#4,a0
-		move.l	a0,PPC
+		addq.l	#4, a0
+		move.l	a0, PPC
 		
 		// Continue main loop
 		bra		main_loop
