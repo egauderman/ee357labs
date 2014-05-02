@@ -152,6 +152,7 @@ ADD:	clr.l 	d1
 		lsr.l	#8, d2
 		lsr.l	#8, d2
 		lsr.l	#7, d2
+		// d5 now holds rd's number (i.e. 0 to 7)
 		move.l	d2, d5
 		// d5 now holds rd's number (i.e. 0 to 7)
 		
@@ -162,6 +163,7 @@ ADD:	clr.l 	d1
 		lsr.l	#8, d2
 		lsr.l	#8, d2
 		lsr.l	#4, d2
+		// d5 now holds rs's number (i.e. 0 to 7)
 		jsr		GET_REG_D2
 		move.l	d2, d6
 		// d6 now holds rs's value
@@ -173,6 +175,7 @@ ADD:	clr.l 	d1
 		lsr.l	#8, d2
 		lsr.l	#8, d2
 		lsr.l	#1, d2
+		// d5 now holds rt's number (i.e. 0 to 7)
 		jsr		GET_REG_D2
 		move.l	d2, d7
 		// d7 now holds rt's value
